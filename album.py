@@ -39,17 +39,21 @@ def find(artist):
     return albums
 
 
-def save_data(year, artist, genre, album):
+def save(year, artist, genre, album):
     """
     Принимает данные из POST-запроса
     """
+    session = connect_db()
+    saved_album = session.query(Album).filter(Album.album == album, Album.artist == artist).first()
+    if saved_album is not None:
+        raise AlreadyExists("Album already exists and has #{}".format(saved_album.id))
+
     album = Album(
         year=year,
         artist=artist,
         genre=genre,
         album=album
     )
-    session = connect_db()
     session.add(album)
     session.commit()
     return album

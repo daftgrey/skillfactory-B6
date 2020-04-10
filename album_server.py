@@ -25,6 +25,12 @@ def create_album():
     genre = request.forms.get("genre")
     album_name = request.forms.get("album")
 
+    new_album = album.save(year, artist, genre, album_name)
+    print("New #{} album successfully saved".format(new_album.id))
+    result = "Альбом #{} успешно сохранен".format(new_album.id)
+
+    return result
+
 
 if __name__ == "__main__":
     run(host="localhost", port=8080, debug=True)
