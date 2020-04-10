@@ -21,10 +21,16 @@ class Album(Base):
 
 
 class Error(Exception):
+    """
+    Возбуждает исключение Exception
+    """
     pass
 
 
 class AlreadyExists(Error):
+    """
+    Используется для идентификации ввода существующих данных в таблице
+    """
     pass
 
 
@@ -55,11 +61,12 @@ def save(year, artist, genre, album):
     assert isinstance(artist, str), "Неверный формат ввода в поле артист"
     assert isinstance(genre, str), "Неверный формат ввода в поле жанр"
     assert isinstance(album, str), "Неверный формат ввода в поле альбом"
+
     session = connect_db()
     saved_album = session.query(Album).filter(Album.album == album, Album.artist == artist).first()
 
     if saved_album is not None:
-        raise AlreadyExists("Album already exists and has #{}".format(saved_album.id))
+        raise AlreadyExists("Такой альбом уже существует в БД с номером #{}".format(saved_album.id))
 
     album = Album(
         year=year,

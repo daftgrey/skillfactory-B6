@@ -38,7 +38,7 @@ def create_album():
     except album.AlreadyExists as err:
         result = HTTPError(409, str(err))
     else:
-        print("New #{} album successfully saved".format(new_album.id))
+        print("Альбому присвоен номер #{}".format(new_album.id))
         result = "Альбом #{} успешно сохранен".format(new_album.id)
     return result
 
