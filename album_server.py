@@ -1,7 +1,8 @@
 from bottle import route
 from bottle import run
-from bottle import HTTPError
 from bottle import request
+from bottle import HTTPError
+
 import album
 
 
@@ -13,8 +14,8 @@ def albums(artist):
         result = HTTPError(404, message)
     else:
         album_names = [album.album for album in albums_list]
-        result = "Список альбомов {}: ".format(artist)
-        result += ", ".join(album_names)
+        result = "Список альбомов {}:<br>".format(artist)
+        result += "<br>".join(album_names)
     return result
 
 
@@ -25,10 +26,20 @@ def create_album():
     genre = request.forms.get("genre")
     album_name = request.forms.get("album")
 
-    new_album = album.save(year, artist, genre, album_name)
-    print("New #{} album successfully saved".format(new_album.id))
-    result = "Альбом #{} успешно сохранен".format(new_album.id)
+    try:
+        year = int(year)
+    except ValueError:
+        return HTTPError(400, "Указан некорректный год альбома")
 
+    try:
+        new_album = album.save(year, artist, genre, album_name)
+    except AssertionError as err:
+        result = HTTPError(400, str(err))
+    except album.AlreadyExists as err:
+        result = HTTPError(409, str(err))
+    else:
+        print("New #{} album successfully saved".format(new_album.id))
+        result = "Альбом #{} успешно сохранен".format(new_album.id)
     return result
 
 

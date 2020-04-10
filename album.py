@@ -20,6 +20,14 @@ class Album(Base):
     album = sa.Column(sa.TEXT)
 
 
+class Error(Exception):
+    pass
+
+
+class AlreadyExists(Error):
+    pass
+
+
 def connect_db():
     """
     Устанавливает соединение к базе данных, создает таблицы, если их еще нет и возвращает объект сессии
@@ -43,8 +51,13 @@ def save(year, artist, genre, album):
     """
     Принимает данные из POST-запроса
     """
+    assert isinstance(year, int), "Неверная формат ввода в поле дата"
+    assert isinstance(artist, str), "Неверный формат ввода в поле артист"
+    assert isinstance(genre, str), "Неверный формат ввода в поле жанр"
+    assert isinstance(album, str), "Неверный формат ввода в поле альбом"
     session = connect_db()
     saved_album = session.query(Album).filter(Album.album == album, Album.artist == artist).first()
+
     if saved_album is not None:
         raise AlreadyExists("Album already exists and has #{}".format(saved_album.id))
 
